@@ -1,0 +1,154 @@
+/* Design tokens Argentum — Tailwind v4 (@theme).
+   Palette imposée par le client, sans ajout de teinte :
+     #0D1B3D navy   — texte principal et éléments premium
+     #1E3A8A bleu   — marque et boutons
+     #6FA8FF ciel   — accents, survols, éléments graphiques
+     #FFFFFF blanc  — fond et contrastes
+   Les tons intermédiaires ci-dessous sont des dérivés de ces quatre couleurs.
+
+   Les deux entités se distinguent par un thème complet (clair pour Investments, sombre pour
+   Advisors), pilotée par l'attribut `data-brand` sur <html>. Voir la seconde moitié du fichier. */
+
+@theme {
+  /* --- Palette de marque ------------------------------------------------- */
+  --color-navy: #0d1b3d;
+  --color-royal: #1e3a8a;
+  --color-sky: #6fa8ff;
+  --color-white: #ffffff;
+
+  /* Dérivés du navy, du plus clair au plus foncé. */
+  --color-navy-50: #f4f7fc;
+  --color-navy-100: #e6ecf6;
+  --color-navy-200: #c8d5e9;
+  --color-navy-300: #9aaecd;
+  --color-navy-400: #6b83ab;
+  --color-navy-500: #4a5878;
+  --color-navy-600: #2f4372;
+  --color-navy-700: #1e3a8a;
+  --color-navy-800: #142a5c;
+  --color-navy-900: #0d1b3d;
+  --color-navy-950: #081228;
+
+  /* --- Typographie ------------------------------------------------------- */
+  /* Serif pour les titres : registre institutionnel genevois. Sans neutre pour le texte. */
+  --font-display: var(--font-newsreader), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Rythme et formes -------------------------------------------------- */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+
+  --spacing-section: 7rem;
+  --spacing-gutter: 1.5rem;
+
+  --container-page: 78rem;
+  --container-prose: 44rem;
+
+  --shadow-soft: 0 1px 2px rgb(13 27 61 / 0.04), 0 8px 32px -16px rgb(13 27 61 / 0.12);
+  --shadow-card: 0 2px 4px rgb(13 27 61 / 0.04), 0 16px 48px -20px rgb(13 27 61 / 0.18);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ========================================================================
+   Thèmes d'entité
+   ------------------------------------------------------------------------
+   Investments = thème clair, Advisors = thème sombre. Chaque jeton sémantique
+   est défini dans les deux thèmes ; aucun composant ne référence une couleur brute.
+   ======================================================================== */
+
+:root,
+[data-brand='investments'] {
+  --page-bg: var(--color-white);
+  --page-bg-alt: var(--color-navy-50);
+  --surface: var(--color-white);
+  --surface-raised: var(--color-white);
+
+  --text: var(--color-navy-900);
+  --text-strong: var(--color-navy-950);
+  --text-muted: var(--color-navy-500);
+  --text-on-brand: var(--color-white);
+
+  --brand: var(--color-royal);
+  --brand-hover: var(--color-navy-800);
+  --accent: var(--color-sky);
+  --accent-contrast: var(--color-royal);
+
+  --border: rgb(13 27 61 / 0.12);
+  --border-strong: rgb(13 27 61 / 0.24);
+
+  /* Bandeau à contraste inversé, utilisé une à deux fois par page. */
+  --band-bg: var(--color-navy-900);
+  --band-text: var(--color-white);
+  --band-muted: var(--color-navy-200);
+  --band-accent: var(--color-sky);
+
+  /* La séquence fournie par le client traverse des plans très clairs (ciel, drapeau suisse) :
+     le voile doit rester assez dense pour qu'un titre blanc tienne sur toute la durée. */
+  --overlay-video: linear-gradient(
+    180deg,
+    rgb(8 18 40 / 0.82) 0%,
+    rgb(8 18 40 / 0.7) 45%,
+    rgb(8 18 40 / 0.92) 100%
+  );
+
+  color-scheme: light;
+}
+
+[data-brand='advisors'] {
+  --page-bg: var(--color-navy-900);
+  --page-bg-alt: var(--color-navy-950);
+  --surface: #122448;
+  --surface-raised: #16294f;
+
+  --text: var(--color-white);
+  --text-strong: var(--color-white);
+  --text-muted: var(--color-navy-300);
+  --text-on-brand: var(--color-navy-950);
+
+  /* En fond sombre le bleu moyen n'a plus assez de contraste : le ciel prend le rôle de marque. */
+  --brand: var(--color-sky);
+  --brand-hover: #9cc4ff;
+  --accent: var(--color-sky);
+  --accent-contrast: var(--color-sky);
+
+  --border: rgb(111 168 255 / 0.2);
+  --border-strong: rgb(111 168 255 / 0.4);
+
+  --band-bg: var(--color-white);
+  --band-text: var(--color-navy-900);
+  --band-muted: var(--color-navy-500);
+  --band-accent: var(--color-royal);
+
+  --overlay-video: linear-gradient(
+    180deg,
+    rgb(5 12 28 / 0.86) 0%,
+    rgb(5 12 28 / 0.76) 45%,
+    rgb(5 12 28 / 0.96) 100%
+  );
+
+  color-scheme: dark;
+}
+
+/* Expose les jetons sémantiques aux utilitaires Tailwind (bg-page, text-muted, border-line…). */
+@theme inline {
+  --color-page: var(--page-bg);
+  --color-page-alt: var(--page-bg-alt);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-text: var(--text);
+  --color-text-strong: var(--text-strong);
+  --color-text-muted: var(--text-muted);
+  --color-on-brand: var(--text-on-brand);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-band: var(--band-bg);
+  --color-band-text: var(--band-text);
+  --color-band-muted: var(--band-muted);
+  --color-band-accent: var(--band-accent);
+}

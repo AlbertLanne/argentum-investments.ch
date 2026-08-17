@@ -6,20 +6,29 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "content:extract": "python3 scripts/odt2blocks.py content-source/*.odt > scripts/blocks.json",
+    "content:build": "python3 scripts/gen_content.py src/content/fr",
+    "check:brand": "node scripts/check-brand-switch.mjs",
+    "check:shots": "node scripts/screenshots.mjs .screenshots"
   },
   "dependencies": {
     "next": "16.3.1",
+    "nodemailer": "^9.0.5",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

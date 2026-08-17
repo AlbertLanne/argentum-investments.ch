@@ -1,26 +1,111 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import '../styles/ekomedia-tokens.css';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Le thème suit l'entité active (data-brand), jamais la préférence système : Investments est
+   clair et Advisors est sombre par décision de marque, pas par confort de lecture. */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Ces règles doivent rester dans `@layer base`. Écrites hors couche, elles l'emporteraient sur
+   toutes les classes utilitaires de Tailwind — un `text-white` sur un titre placé au-dessus
+   d'une photographie n'aurait alors aucun effet. */
+@layer base {
+  html {
+    --header-h: 4.5rem;
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-h);
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @media (min-width: 640px) {
+    html {
+      --header-h: 5.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--page-bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* La bascule d'entité ne doit pas produire un flash blanc/navy brutal. Limité aux propriétés
+     de couleur et aux éléments de structure, pour ne pas ralentir les survols. */
+  body,
+  header,
+  footer,
+  section,
+  aside,
+  article,
+  li,
+  dl,
+  dt,
+  dd,
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    transition:
+      background-color 220ms var(--ease-out-quart),
+      border-color 220ms var(--ease-out-quart),
+      color 220ms var(--ease-out-quart);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--text-strong);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--color-navy-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 1px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Filet vertical du fil des étapes 01 → 05. */
+@utility step-rail {
+  background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+}
+
+/* Le logo client est dessiné en navy sur fond transparent : illisible sur le thème sombre
+   d'Advisors et sur la vidéo du hero. On le retourne alors en blanc plein. */
+.brand-logo {
+  transition: filter 220ms var(--ease-out-quart);
+}
+
+[data-brand='advisors'] .brand-logo,
+.on-dark .brand-logo {
+  filter: brightness(0) invert(1);
 }

@@ -1,69 +1,99 @@
-import Image from "next/image";
+import type { Metadata } from 'next'
 
-export default function Home() {
+import { resolveBrandText } from '@/brand/brands'
+import { getBrand } from '@/brand/resolve'
+import { HeroVideo } from '@/components/HeroVideo'
+import { PageBody } from '@/components/PageBody'
+import { TwoEntities } from '@/components/TwoEntities'
+import { Button } from '@/components/ui/Button'
+import { Container } from '@/components/ui/Container'
+import { getPage } from '@/content/fr'
+
+/**
+ * Repères tirés du contenu client, non inventés :
+ * le seuil de 1,5 M€ et les délais d'évaluation figurent dans Acceuil.odt et Services.odt,
+ * les sept années d'expérience dans Acceuil.odt.
+ */
+const KEY_FIGURES = [
+  { value: '1,5 M€', label: 'Besoin de financement minimum étudié' },
+  { value: '3 à 4', label: 'Semaines pour l’évaluation d’un dossier complet' },
+  { value: '7 ans', label: 'D’expérience dans l’évaluation et le financement' },
+]
+
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrand()
+  const page = getPage('accueil')
+  return {
+    // L'accueil porte la raison sociale seule, sans le gabarit « %s — … ».
+    title: { absolute: `${brand.legalName} — Capital privé, Genève` },
+    description: resolveBrandText(page.lead[0] ?? brand.tagline, brand).slice(0, 300),
+  }
+}
+
+export default async function HomePage() {
+  const brand = await getBrand()
+  const page = getPage('accueil')
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <>
+      <section className="relative isolate flex min-h-[38rem] items-end overflow-hidden sm:min-h-[44rem] lg:min-h-[calc(100dvh-2rem)]">
+        <HeroVideo />
+
+        <Container className="on-dark relative pt-[calc(var(--header-h)+5rem)] pb-20 sm:pb-28">
+          <div className="flex flex-col gap-7">
+            <div className="flex items-center gap-4">
+              <span aria-hidden="true" className="h-px w-14 bg-white/70" />
+              <span className="text-[0.6875rem] uppercase tracking-[0.16em] text-white/80">
+                Genève · Suisse
+              </span>
+            </div>
+
+            <h1 className="max-w-[24ch] text-[2.125rem] leading-[1.1] text-white sm:text-[3.25rem] sm:leading-[1.08] lg:text-[4.25rem]">
+              {resolveBrandText(page.title ?? brand.legalName, brand)}
+            </h1>
+
+            <div className="max-w-(--container-prose) space-y-4">
+              {page.lead.map((paragraph, index) => (
+                <p key={index} className="text-[1.0625rem] leading-[1.75] text-white/85 sm:text-[1.125rem]">
+                  {resolveBrandText(paragraph, brand)}
+                </p>
+              ))}
+            </div>
+
+            <div className="mt-2 flex flex-wrap gap-4">
+              {/* Sur la vidéo, aucun jeton de thème ne s'applique : les deux boutons sont
+                  explicitement traités pour fond sombre. */}
+              <Button href="/contact" variant="solidOnDark">
+                Présentez votre projet
+              </Button>
+              <Button href="/finance" variant="ghostOnDark" withArrow={false}>
+                Nos domaines d’investissement
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-line bg-page-alt py-12 sm:py-14">
+        <Container>
+          <dl className="grid gap-10 sm:grid-cols-3">
+            {KEY_FIGURES.map((figure) => (
+              <div key={figure.value} className="flex flex-col gap-2">
+                <dt className="font-(family-name:--font-display) text-[2.25rem] leading-none text-text-strong sm:text-[2.75rem]">
+                  {figure.value}
+                </dt>
+                <dd className="max-w-[24ch] text-[0.875rem] leading-snug text-text-muted">
+                  {figure.label}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Container>
+      </section>
+
+      <TwoEntities active={brand.key} />
+
+      <PageBody page={page} brand={brand} />
+    </>
+  )
 }
