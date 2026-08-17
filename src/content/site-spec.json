@@ -1,0 +1,277 @@
+{
+  "$comment": "Généré par scripts/gen_site_spec.py — ne pas éditer à la main.",
+  "project": "argentum-investments.ch",
+  "locale": "fr-CH",
+  "locales": [
+    "fr"
+  ],
+  "indexing": {
+    "noindex": true,
+    "reason": "Exclusion totale demandée par le client.",
+    "layers": [
+      "meta robots (layout)",
+      "X-Robots-Tag (proxy.ts)",
+      "robots.txt"
+    ],
+    "sitemap": false,
+    "sitemapReason": "Un sitemap contredirait le no-index : aucune URL à proposer."
+  },
+  "brands": [
+    {
+      "key": "investments",
+      "legalName": "Argentum Investments SA",
+      "domain": "argentum-investments.ch",
+      "theme": "light"
+    },
+    {
+      "key": "advisors",
+      "legalName": "Argentum Advisors SA",
+      "domain": "argentum-advisors.ch",
+      "theme": "dark"
+    }
+  ],
+  "contentSource": {
+    "files": 19,
+    "format": "odt",
+    "archivedIn": "content-source/",
+    "pipeline": [
+      "pnpm content:extract",
+      "pnpm content:build"
+    ],
+    "handWritten": [
+      "mezzanine-capital"
+    ]
+  },
+  "navigation": {
+    "main": [
+      {
+        "label": "Financement immobilier",
+        "href": "/finance/financement-immobilier"
+      },
+      {
+        "label": "Capital-investissement",
+        "href": "/finance/capital-investissement"
+      },
+      {
+        "label": "Capital-risque",
+        "href": "/finance/capital-risque"
+      },
+      {
+        "label": "Investissements start-up",
+        "href": "/finance/investissements-start-up"
+      },
+      {
+        "label": "Mezzanine Capital",
+        "href": "/finance/mezzanine-capital"
+      },
+      {
+        "label": "Développement de projets",
+        "href": "/finance/developpement-de-projets"
+      },
+      {
+        "label": "Énergies renouvelables",
+        "href": "/finance/energies-renouvelables"
+      },
+      {
+        "label": "Médecine & Pharma",
+        "href": "/finance/medecine-pharma"
+      },
+      {
+        "label": "Solutions technologiques & E-Mobilité",
+        "href": "/finance/solutions-technologiques-e-mobilite"
+      },
+      {
+        "label": "Crowdfunding",
+        "href": "/finance/crowdfunding"
+      },
+      {
+        "label": "Accueil",
+        "href": "/"
+      },
+      {
+        "label": "Services",
+        "href": "/services"
+      },
+      {
+        "label": "Services immobilier",
+        "href": "/services/immobilier"
+      },
+      {
+        "label": "Finance",
+        "href": "/finance"
+      },
+      {
+        "label": "À propos",
+        "href": "/a-propos"
+      },
+      {
+        "label": "Discrétion",
+        "href": "/discretion"
+      },
+      {
+        "label": "Notre équipe",
+        "href": "/notre-equipe"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact"
+      },
+      {
+        "label": "Mentions légales",
+        "href": "/mentions-legales"
+      },
+      {
+        "label": "Impressum",
+        "href": "/impressum"
+      },
+      {
+        "label": "Politique de confidentialité",
+        "href": "/politique-de-confidentialite"
+      }
+    ],
+    "finance": [
+      {
+        "rank": 1,
+        "label": "Financement immobilier",
+        "href": "/finance/financement-immobilier"
+      },
+      {
+        "rank": 2,
+        "label": "Capital-investissement",
+        "href": "/finance/capital-investissement"
+      },
+      {
+        "rank": 3,
+        "label": "Capital-risque",
+        "href": "/finance/capital-risque"
+      },
+      {
+        "rank": 4,
+        "label": "Investissements start-up",
+        "href": "/finance/investissements-start-up"
+      },
+      {
+        "rank": 5,
+        "label": "Mezzanine Capital",
+        "href": "/finance/mezzanine-capital"
+      },
+      {
+        "rank": 6,
+        "label": "Développement de projets",
+        "href": "/finance/developpement-de-projets"
+      },
+      {
+        "rank": 7,
+        "label": "Énergies renouvelables",
+        "href": "/finance/energies-renouvelables"
+      },
+      {
+        "rank": 8,
+        "label": "Médecine & Pharma",
+        "href": "/finance/medecine-pharma"
+      },
+      {
+        "rank": 9,
+        "label": "Crowdfunding",
+        "href": "/finance/crowdfunding"
+      }
+    ]
+  },
+  "routes": [
+    "/",
+    "/a-propos",
+    "/contact",
+    "/discretion",
+    "/finance",
+    "/finance/[slug]",
+    "/impressum",
+    "/mentions-legales",
+    "/notre-equipe",
+    "/politique-de-confidentialite",
+    "/services",
+    "/services/immobilier"
+  ],
+  "pages": {
+    "a-propos": {
+      "title": "À propos",
+      "menu": "À propos"
+    },
+    "accueil": {
+      "title": "Du capital pour vos ambitions. Des partenariats pour votre croissance.",
+      "menu": "Accueil"
+    },
+    "capital-investissement": {
+      "title": "Capital-investissement",
+      "menu": "Capital-investissement"
+    },
+    "capital-risque": {
+      "title": "Capital-risque",
+      "menu": "Capital-risque"
+    },
+    "crowdfunding": {
+      "title": "Crowdfunding",
+      "menu": "Crowdfunding"
+    },
+    "developpement-de-projets": {
+      "title": "Développement de projets",
+      "menu": "Développement de projets"
+    },
+    "discretion": {
+      "title": "Discrétion & Confidentialité",
+      "menu": "Discrétion"
+    },
+    "energies-renouvelables": {
+      "title": "Énergies renouvelables",
+      "menu": "Énergies renouvelables"
+    },
+    "financement-immobilier": {
+      "title": "Financement immobilier",
+      "menu": "Financement immobilier"
+    },
+    "impressum": {
+      "title": "Mentions légales (Impressum)",
+      "menu": "Impressum"
+    },
+    "investissements-start-up": {
+      "title": "Investissements dans les start-up",
+      "menu": "Investissements start-up"
+    },
+    "medecine-pharma": {
+      "title": "Médecine & Pharma",
+      "menu": "Médecine & Pharma"
+    },
+    "mentions-legales": {
+      "title": "Mentions légales",
+      "menu": "Mentions légales"
+    },
+    "mezzanine-capital": {
+      "title": "Mezzanine Capital",
+      "menu": "Mezzanine Capital"
+    },
+    "notre-equipe": {
+      "title": "Notre équipe",
+      "menu": "Notre équipe"
+    },
+    "politique-de-confidentialite": {
+      "title": "Politique de confidentialité",
+      "menu": "Politique de confidentialité"
+    },
+    "services-immobilier": {
+      "title": "Immobilier",
+      "menu": "Services immobilier"
+    },
+    "services": {
+      "title": "Services",
+      "menu": "Services"
+    },
+    "solutions-technologiques-e-mobilite": {
+      "title": "Solutions technologiques & E-Mobilité",
+      "menu": "Solutions technologiques & E-Mobilité"
+    }
+  },
+  "generator": {
+    "script": "scripts/gen_site_spec.py",
+    "commit": "4ef2fdf",
+    "generatedAt": "2026-08-17T14:36:20Z"
+  }
+}

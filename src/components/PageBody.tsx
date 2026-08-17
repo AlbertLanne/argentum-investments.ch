@@ -3,6 +3,22 @@ import { BlockRenderer, type Tone } from '@/components/blocks/BlockRenderer'
 import { Container } from '@/components/ui/Container'
 import type { Block, PageContent, Section } from '@/content/fr/types'
 
+/**
+ * Compare deux titres en ignorant casse et accents.
+ *
+ * Le client écrit « Notre Équipe » en intertitre et « Notre équipe » en titre : une comparaison
+ * stricte laisserait le même titre s'afficher deux fois.
+ */
+function sameHeading(a: string | null, b: string | null) {
+  const norm = (value: string | null) =>
+    (value ?? '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .trim()
+  return norm(a) === norm(b)
+}
+
 /** Blocs qui portent une structure dense : ils justifient un fond teinté. */
 const DENSE: Block['type'][] = ['items', 'steps', 'bullets']
 
@@ -106,7 +122,7 @@ function CompactBody({
         <div className="space-y-12">
           {page.sections.map((section, index) => (
             <div key={index} className="space-y-5">
-              {section.title && section.title !== page.title ? (
+              {section.title && !sameHeading(section.title, page.title) ? (
                 <h2 className="text-[1.25rem] leading-snug sm:text-[1.375rem]">
                   {resolveBrandText(section.title, brand)}
                 </h2>
@@ -155,7 +171,7 @@ export function PageBody({
     <>
       {sections.map((section, index) => {
         const tone = tones[index]
-        const skipTitle = section.title !== null && section.title === page.title
+        const skipTitle = section.title !== null && sameHeading(section.title, page.title)
         return (
           <section
             key={index}

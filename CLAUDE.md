@@ -1,5 +1,12 @@
 @AGENTS.md
 
+> Les **standards EkoMedia** (plugin `ekomedia-os`) s'appliquent : réponses en français, aucun
+> processus en arrière-plan, aucun secret commité, aucun contenu inventé. Les règles ci-dessous
+> les complètent et priment en cas de conflit.
+>
+> Skills utiles ici : `nextjs-quality` avant livraison, `seo-ekomedia` si le no-index est un jour
+> levé, `session-memory` en fin de session. Commandes : `/qa`, `/score`.
+
 # Argentum — site double marque
 
 Site vitrine d'un groupe d'investissement genevois. **Un seul code, deux noms de domaine, deux
@@ -95,10 +102,26 @@ masquer, envelopper ; pour changer une couleur, ajouter une variante au composan
 `solidOnDark` et `ghostOnDark` de `Button` existent pour les fonds photographiques, où aucun jeton
 de thème ne s'applique.
 
+## Pas de sitemap, volontairement
+
+`fscore` signalera toujours l'absence de sitemap. C'est correct : le site est en no-index total,
+un sitemap proposerait aux moteurs des URL qu'on leur interdit par ailleurs. Ne pas « corriger »
+cet avertissement. `src/content/site-spec.json` documente la décision.
+
+## Carte du site
+
+`src/content/site-spec.json` est **généré** depuis la navigation et le registre de contenu
+(`pnpm content:spec`), pour ne pas diverger du code. Le régénérer après toute modification de la
+navigation.
+
 ## Contrôles avant livraison
 
 ```
-pnpm typecheck && pnpm lint && pnpm build
-pnpm check:brand     # serveur de dev requis
+pnpm typecheck && pnpm lint && pnpm test && pnpm build
+pnpm check:brand     # bascule d'entité dans un vrai navigateur — serveur de dev requis
 pnpm check:shots     # captures dans .screenshots/
 ```
+
+`pnpm test` couvre la résolution d'entité et les invariants du contenu : aucune raison sociale en
+dur, aucun placeholder du document source, traduction de Mezzanine effective, cohérence de la
+navigation.

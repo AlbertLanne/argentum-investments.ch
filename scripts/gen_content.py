@@ -8,6 +8,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 
 OUT = sys.argv[1]
 
@@ -90,6 +91,21 @@ def to_page(slug, menu, blocks):
 
 # --- Retouches ciblees ------------------------------------------------------
 
+def same_heading(a, b):
+    """Compare deux titres en ignorant la casse et les accents.
+
+    Le client ecrit « Notre Équipe » en intertitre et « Notre équipe » ailleurs : sans cette
+    normalisation, le titre de page et l'intertitre s'afficheraient tous les deux.
+    """
+    def norm(value):
+        if not value:
+            return ""
+        decomposed = unicodedata.normalize("NFD", value)
+        stripped = "".join(c for c in decomposed if not unicodedata.combining(c))
+        return " ".join(stripped.lower().split())
+
+    return norm(a) == norm(b)
+
 def patch_impressum(page):
     """L'identite legale vient de la config de marque, pas du texte figé du .odt."""
     for section in page["sections"]:
@@ -137,13 +153,18 @@ def patch_privacy(page):
 
 
 def patch_team(page):
-    """La grille des partenaires est retiree : le client n'a fourni que des placeholders."""
-    page["title"] = page["title"] or "Notre équipe"
+    """La grille des partenaires est retiree : le client n'a fourni que des placeholders.
+
+    La fiche n'a pas de H1 : elle ouvre sur un H2 homonyme, dont le texte devient le chapeau de
+    la page pour ne pas afficher deux fois le meme titre.
+    """
     page["sections"] = [s for s in page["sections"] if s["level"] < 3]
-    if page["sections"] and page["sections"][0]["title"] == "Notre équipe":
-        page["lead"] = [p for b in page["sections"][0]["blocks"]
+    first = page["sections"][0] if page["sections"] else None
+    if first and same_heading(first["title"], page["title"] or "Notre équipe"):
+        page["lead"] = [p for b in first["blocks"]
                         if b["type"] == "prose" for p in b["paragraphs"]]
         page["sections"] = page["sections"][1:]
+    page["title"] = page["title"] or "Notre équipe"
     return page
 
 
