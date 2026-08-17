@@ -5,11 +5,14 @@ import { headers } from 'next/headers'
 import { getBrand } from '@/brand/resolve'
 import { projectEnquirySchema, type EnquiryState } from '@/domain/project-enquiry'
 import {
+  buildAcknowledgement,
   buildEnquiryHtml,
   buildEnquiryText,
   EmailNotConfiguredError,
   getTransporter,
-  SMTP_FROM,
+  resolveRecipient,
+  sanitizeHeader,
+  smtpFrom,
   type MailField,
 } from '@/lib/email'
 
@@ -19,9 +22,9 @@ const RATE_WINDOW_MS = 60 * 60 * 1000
 /**
  * Limitation en mémoire du processus.
  *
- * Suffisante contre un envoi répété depuis un même poste. Elle ne survit pas à un redémarrage
- * et n'est pas partagée entre instances : sur un hébergement multi-instances, la remplacer par
- * un compteur externe.
+ * Suffisante contre un envoi répété depuis un même poste. Elle ne survit pas à un redémarrage et
+ * n'est pas partagée entre instances : sur un hébergement multi-instances, la remplacer par un
+ * compteur externe.
  */
 const attempts = new Map<string, { count: number; firstAt: number }>()
 
@@ -50,8 +53,9 @@ async function clientKey(): Promise<string> {
 /**
  * Traite une soumission de projet.
  *
- * Le destinataire suit l'entité active : une demande envoyée depuis le site Advisors arrive sur
- * contact@argentum-advisors.ch, avec la raison sociale correspondante en objet.
+ * Deux messages partent : la demande vers la boîte de l'entité active, et un accusé de réception
+ * vers le visiteur. L'accusé est secondaire — s'il échoue, la demande a tout de même été reçue et
+ * le visiteur ne doit pas voir d'erreur.
  */
 export async function submitEnquiry(
   _previous: EnquiryState,
@@ -80,9 +84,11 @@ export async function submitEnquiry(
   }
 
   const brand = await getBrand()
+  const { to, redirected } = resolveRecipient(brand)
 
   const fields: MailField[] = [
     { label: 'Entité destinataire', value: brand.legalName },
+    ...(redirected ? [{ label: 'Redirigé depuis', value: brand.email }] : []),
     { label: 'Nom', value: `${data.firstName} ${data.lastName}` },
     { label: 'E-mail', value: data.email },
     ...(data.phone ? [{ label: 'Téléphone', value: data.phone }] : []),
@@ -95,30 +101,61 @@ export async function submitEnquiry(
   ]
 
   const title = `Nouvelle soumission de projet — ${data.company}`
+  const transporter = getConfiguredTransporter()
+
+  if ('error' in transporter) {
+    return {
+      status: 'error',
+      message: `L’envoi du formulaire n’est pas encore actif. Écrivez-nous directement à ${brand.email}.`,
+    }
+  }
 
   try {
-    await getTransporter().sendMail({
-      from: SMTP_FROM(),
-      to: brand.email,
-      replyTo: data.email,
-      subject: `[${brand.distinctive}] ${data.company} — ${data.capital}`,
+    await transporter.value.sendMail({
+      from: smtpFrom(),
+      to,
+      replyTo: sanitizeHeader(data.email),
+      subject: sanitizeHeader(`[${brand.distinctive}] ${data.company} — ${data.capital}`),
       text: buildEnquiryText(title, fields),
       html: buildEnquiryHtml(title, fields),
     })
   } catch (error) {
-    if (error instanceof EmailNotConfiguredError) {
-      console.error('[contact] SMTP non configuré :', error.message)
-      return {
-        status: 'error',
-        message: `L’envoi du formulaire n’est pas encore actif. Écrivez-nous directement à ${brand.email}.`,
-      }
-    }
-    console.error('[contact] échec de l’envoi :', error)
+    console.error('[contact] échec de l’envoi de la demande :', error)
     return {
       status: 'error',
       message: `L’envoi a échoué. Réessayez dans quelques instants ou écrivez-nous à ${brand.email}.`,
     }
   }
 
+  // À partir d'ici la demande est arrivée : plus aucune erreur ne doit être montrée au visiteur.
+  try {
+    const ack = buildAcknowledgement(brand, data.firstName, data.company)
+    await transporter.value.sendMail({
+      from: smtpFrom(),
+      to: sanitizeHeader(data.email),
+      replyTo: brand.email,
+      subject: sanitizeHeader(ack.subject),
+      text: ack.text,
+      html: ack.html,
+    })
+  } catch (error) {
+    console.error('[contact] accusé de réception non envoyé :', error)
+  }
+
   return { status: 'success' }
+}
+
+/** Isole l'absence de configuration SMTP des erreurs d'envoi, qui ne se traitent pas pareil. */
+function getConfiguredTransporter():
+  | { value: ReturnType<typeof getTransporter> }
+  | { error: EmailNotConfiguredError } {
+  try {
+    return { value: getTransporter() }
+  } catch (error) {
+    if (error instanceof EmailNotConfiguredError) {
+      console.error('[contact] SMTP non configuré :', error.message)
+      return { error }
+    }
+    throw error
+  }
 }
