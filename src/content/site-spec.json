@@ -271,7 +271,6 @@
   },
   "generator": {
     "script": "scripts/gen_site_spec.py",
-    "commit": "4ef2fdf",
-    "generatedAt": "2026-08-17T14:36:20Z"
+    "commit": "1cf02e4"
   }
 }

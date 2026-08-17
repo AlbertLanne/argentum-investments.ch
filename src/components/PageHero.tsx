@@ -26,6 +26,10 @@ export function PageHero({
   imageAlt?: string
 }) {
   const onImage = Boolean(image)
+  // Sans photographie ni chapeau, la hauteur d'un hero éditorial ne laisserait qu'un grand vide
+  // sous le titre. C'est le cas de Discrétion & Confidentialité, dont le .odt place son premier
+  // paragraphe sous un intertitre.
+  const bare = !onImage && !lead?.length
 
   return (
     <section
@@ -48,9 +52,13 @@ export function PageHero({
       ) : null}
 
       <Container
-        className={`pt-[calc(var(--header-h)+4rem)] pb-16 sm:pt-[calc(var(--header-h)+6rem)] sm:pb-24 ${
-          onImage ? 'min-h-[26rem] sm:min-h-[32rem]' : ''
-        }`}
+        className={
+          bare
+            ? 'pt-[calc(var(--header-h)+3rem)] pb-10 sm:pt-[calc(var(--header-h)+4rem)] sm:pb-14'
+            : `pt-[calc(var(--header-h)+4rem)] pb-16 sm:pt-[calc(var(--header-h)+6rem)] sm:pb-24 ${
+                onImage ? 'min-h-[26rem] sm:min-h-[32rem]' : ''
+              }`
+        }
       >
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
