@@ -2,7 +2,12 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Newsreader } from 'next/font/google'
 
 import { getBrand } from '@/brand/resolve'
+import { CopyGuard } from '@/components/CopyGuard'
 import { Footer } from '@/components/Footer'
+import {
+  GoogleTagManagerNoScript,
+  GoogleTagManagerScript,
+} from '@/components/GoogleTagManager'
 import { Header } from '@/components/Header'
 import { MAIN_NAV } from '@/config/navigation'
 
@@ -63,12 +68,22 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
+/**
+ * Le site est en validation chez le client : la copie est dissuadée par défaut. Voir la portée
+ * réelle de cette protection dans `CopyGuard`. À passer à `off` lors de la mise en ligne.
+ */
+const COPY_GUARD = process.env.NEXT_PUBLIC_COPY_GUARD !== 'off'
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const brand = await getBrand()
 
   return (
     <html lang="fr" data-brand={brand.key} className={`${inter.variable} ${newsreader.variable}`}>
       <body className="flex min-h-dvh flex-col">
+        <GoogleTagManagerNoScript />
+
+        {COPY_GUARD ? <CopyGuard /> : null}
+
         <a
           href="#contenu"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-100 focus:rounded-(--radius-md) focus:bg-brand focus:px-4 focus:py-2 focus:text-on-brand"
@@ -83,6 +98,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </main>
 
         <Footer brand={brand} />
+
+        <GoogleTagManagerScript />
       </body>
     </html>
   )
