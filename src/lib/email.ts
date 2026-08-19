@@ -11,6 +11,12 @@ import type { Brand } from '@/brand/brands'
 
 const REQUIRED_VARS = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_FROM'] as const
 
+/** Expéditeur propre à chaque entité, quand les deux domaines ont leur propre boîte. */
+const FROM_BY_BRAND: Record<string, string> = {
+  investments: 'SMTP_FROM_INVESTMENTS',
+  advisors: 'SMTP_FROM_ADVISORS',
+}
+
 export class EmailNotConfiguredError extends Error {
   readonly missing: readonly string[]
 
@@ -57,8 +63,18 @@ export async function verifyTransporter(): Promise<void> {
   await getTransporter().verify()
 }
 
-export function smtpFrom(): string {
-  return process.env.SMTP_FROM!
+/**
+ * Expéditeur des messages, propre à l'entité active quand il est défini.
+ *
+ * Les deux entités ont chacune leur domaine chez IONOS. Envoyer l'accusé de réception d'une
+ * demande Advisors depuis une adresse `@argentum-investments.ch` désaligne l'expéditeur de la
+ * marque affichée, et fait échouer les contrôles SPF et DMARC du domaine d'envoi.
+ *
+ * `SMTP_FROM` reste le repli : un seul expéditeur suffit tant que le client n'a qu'une boîte.
+ */
+export function smtpFrom(brand: Brand): string {
+  const perBrand = process.env[FROM_BY_BRAND[brand.key]]?.trim()
+  return perBrand || process.env.SMTP_FROM!
 }
 
 /**

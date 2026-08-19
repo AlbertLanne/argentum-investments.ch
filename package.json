@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "content:spec": "python3 scripts/gen_site_spec.py",
-    "email:test": "node --env-file-if-exists=.env.local scripts/check-smtp.mjs"
+    "email:test": "node --env-file-if-exists=.env.local scripts/check-smtp.mjs",
+    "check:delivery": "node scripts/check-form-delivery.mjs"
   },
   "dependencies": {
     "next": "16.3.1",

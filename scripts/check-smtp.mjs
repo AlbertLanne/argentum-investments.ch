@@ -7,14 +7,20 @@
  * Les variables sont lues dans .env.local via --env-file (voir package.json).
  * Aucun secret n'est affiché : seuls l'hôte, le port et l'utilisateur le sont.
  */
+import { existsSync } from 'node:fs'
+
 import nodemailer from 'nodemailer'
 
 const REQUIRED = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_FROM']
 
-const missing = REQUIRED.filter((name) => !process.env[name])
+const missing = REQUIRED.filter((name) => !process.env[name]?.trim())
 if (missing.length > 0) {
-  console.error(`\n✗ Variables manquantes : ${missing.join(', ')}`)
-  console.error('  Copiez .env.example en .env.local et renseignez-les.\n')
+  console.error(`\n✗ Variables manquantes ou vides : ${missing.join(', ')}`)
+  console.error(
+    existsSync('.env.local')
+      ? '  Complétez ces lignes dans .env.local.\n'
+      : '  Copiez .env.example en .env.local et renseignez-les.\n',
+  )
   process.exit(1)
 }
 
@@ -30,7 +36,20 @@ console.log(`  hôte         ${process.env.SMTP_HOST}`)
 console.log(`  port         ${port} (${secure ? 'TLS implicite' : 'STARTTLS'})`)
 console.log(`  utilisateur  ${process.env.SMTP_USER}`)
 console.log(`  expéditeur   ${process.env.SMTP_FROM}`)
-console.log(`  destinataire ${process.env.SMTP_TO ?? 'adresse de l’entité active (pas de redirection)'}`)
+for (const [label, name] of [
+  ['Investments', 'SMTP_FROM_INVESTMENTS'],
+  ['Advisors', 'SMTP_FROM_ADVISORS'],
+]) {
+  const value = process.env[name]?.trim()
+  if (value) console.log(`   ↳ ${label.padEnd(12)}${value}`)
+}
+const redirect = process.env.SMTP_TO?.trim()
+console.log(
+  `  destinataire ${redirect ? `${redirect} (REDIRECTION ACTIVE)` : 'adresse de l’entité active'}`,
+)
+if (redirect) {
+  console.log('               ⚠ SMTP_TO est renseigné : à vider avant la mise en ligne.')
+}
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -42,16 +61,30 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 20_000,
 })
 
-/** Traduit les codes d'erreur SMTP en cause probable et geste correctif. */
+/**
+ * Traduit les codes d'erreur SMTP en cause probable et geste correctif.
+ *
+ * Les mentions IONOS correspondent au fournisseur retenu pour ce projet : la messagerie du client
+ * y est hébergée, avec les deux domaines.
+ */
 function explain(error) {
   const code = error?.code ?? error?.responseCode
   const hints = {
-    EAUTH: 'Identifiants refusés. Vérifiez SMTP_USER et SMTP_PASSWORD. Sur Gmail et Outlook, un mot de passe d’application est requis, pas le mot de passe du compte.',
+    EAUTH:
+      'Identifiants refusés. Chez IONOS, SMTP_USER est l’adresse e-mail COMPLÈTE de la boîte ' +
+      '(par exemple no-reply@argentum-investments.ch), pas un login abrégé, et le mot de passe ' +
+      'est celui de la boîte, pas celui du compte client IONOS.',
     ECONNREFUSED: 'Connexion refusée. Hôte ou port erroné, ou port bloqué par le réseau.',
-    ETIMEDOUT: 'Délai dépassé. Souvent un port sortant filtré : essayez 587 si vous êtes en 465, ou l’inverse.',
-    ENOTFOUND: 'Hôte introuvable. Vérifiez l’orthographe de SMTP_HOST.',
-    ESOCKET: 'Négociation TLS échouée. Le port 465 exige TLS implicite, le 587 STARTTLS : vérifiez la correspondance.',
-    EENVELOPE: 'Enveloppe refusée. SMTP_FROM doit appartenir au domaine autorisé par le serveur.',
+    ETIMEDOUT:
+      'Délai dépassé, souvent un port sortant filtré. Passez de 465 à 587, ou l’inverse. ' +
+      'IONOS bloque le port 25 : ne l’utilisez pas.',
+    ENOTFOUND: 'Hôte introuvable. Chez IONOS, l’hôte est smtp.ionos.com — vérifiez l’orthographe.',
+    ESOCKET:
+      'Négociation TLS échouée. Le port 465 exige TLS implicite, le 587 STARTTLS : vérifiez que ' +
+      'SMTP_PORT correspond bien au mode attendu.',
+    EENVELOPE:
+      'Enveloppe refusée. SMTP_FROM doit être une boîte qui existe réellement sur le compte ' +
+      'IONOS ; un expéditeur inconnu du serveur est rejeté.',
   }
   return hints[code] ?? `Code : ${code ?? 'inconnu'}`
 }

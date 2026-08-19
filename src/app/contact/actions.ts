@@ -112,7 +112,7 @@ export async function submitEnquiry(
 
   try {
     await transporter.value.sendMail({
-      from: smtpFrom(),
+      from: smtpFrom(brand),
       to,
       replyTo: sanitizeHeader(data.email),
       subject: sanitizeHeader(`[${brand.distinctive}] ${data.company} — ${data.capital}`),
@@ -131,7 +131,7 @@ export async function submitEnquiry(
   try {
     const ack = buildAcknowledgement(brand, data.firstName, data.company)
     await transporter.value.sendMail({
-      from: smtpFrom(),
+      from: smtpFrom(brand),
       to: sanitizeHeader(data.email),
       replyTo: brand.email,
       subject: sanitizeHeader(ack.subject),
