@@ -58,7 +58,7 @@ const IMAGE_BY_SLUG: Record<string, { image: StaticImageData; alt: string }> = {
   },
   'medecine-pharma': {
     image: medecinePharma,
-    alt: 'Comprimé pharmaceutique isolé, éclairage en studio',
+    alt: 'Stéthoscope sur fond neutre',
   },
   'solutions-technologiques-e-mobilite': {
     image: solutionsTechnologiquesEMobilite,
