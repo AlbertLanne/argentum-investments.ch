@@ -23,7 +23,7 @@ export default function NotreEquipePage() {
         slug="notre-equipe"
         eyebrow="Notre équipe"
         image={image}
-        imageAlt="Vue sur une ville suisse depuis une terrasse en hauteur"
+        imageAlt="Escalier en marbre d’un intérieur institutionnel élégant"
       />
       <RelatedLinks
         title="Poursuivre"

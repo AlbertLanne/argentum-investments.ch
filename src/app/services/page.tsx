@@ -13,7 +13,7 @@ export default function ServicesPage() {
       slug="services"
       eyebrow="Services"
       image={image}
-      imageAlt="Deux personnes consultent un téléphone au bord d’un lac suisse"
+      imageAlt="Le massif du Mont-Blanc vu depuis un pâturage suisse"
     />
   )
 }

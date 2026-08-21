@@ -38,7 +38,7 @@ export default async function ContactPage() {
         ]}
         brand={brand}
         image={image}
-        imageAlt="Rassemblement en plein air au bord du lac à Genève"
+        imageAlt="Le pont du Mont-Blanc sur le lac Léman à Genève"
       />
 
       <section className="bg-page py-16 sm:py-20 lg:py-(--spacing-section)">

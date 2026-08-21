@@ -13,7 +13,7 @@ export default function ServicesImmobilierPage() {
       slug="services-immobilier"
       eyebrow="Services · Immobilier"
       image={image}
-      imageAlt="Terrasse au bord du lac Léman avec le Jet d’eau en arrière-plan"
+      imageAlt="Façade d’une villa de prestige à Genève"
     />
   )
 }
