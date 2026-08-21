@@ -13,7 +13,7 @@ export default function ServicesPage() {
       slug="services"
       eyebrow="Services"
       image={image}
-      imageAlt="Le massif du Mont-Blanc vu depuis un pâturage suisse"
+      imageAlt="Hall d’entrée en marbre et dorures d’un immeuble historique"
     />
   )
 }
