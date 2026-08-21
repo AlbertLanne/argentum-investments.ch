@@ -5,6 +5,7 @@ import image from '@/assets/images/finance.png'
 import { resolveBrandText } from '@/brand/brands'
 import { getBrand } from '@/brand/resolve'
 import { PageHero } from '@/components/PageHero'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { FINANCE_LINKS } from '@/config/navigation'
@@ -62,34 +63,36 @@ export default async function FinancePage() {
         <Container>
           <ul className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
             {domains.map((domain, index) => (
-              <li key={domain.href}>
-                <Link
-                  href={domain.href}
-                  className="group flex h-full flex-col gap-4 border-t border-line p-7 transition-colors duration-200 hover:border-accent hover:bg-page-alt"
-                >
-                  <span className="font-(family-name:--font-display) text-[0.875rem] tabular-nums text-accent-contrast">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <h2 className="font-(family-name:--font-display) text-[1.3125rem] leading-snug">
-                    {domain.label}
-                  </h2>
-                  {domain.claim ? (
-                    <p className="text-[0.9375rem] leading-snug text-text">
-                      {resolveBrandText(domain.claim, brand)}
-                    </p>
-                  ) : null}
-                  {domain.summary ? (
-                    <p className="line-clamp-4 text-[0.875rem] leading-[1.7] text-text-muted">
-                      {resolveBrandText(domain.summary, brand)}
-                    </p>
-                  ) : null}
-                  <span
-                    aria-hidden="true"
-                    className="mt-auto pt-3 text-[0.8125rem] text-text-muted transition-transform duration-200 ease-(--ease-out-quart) group-hover:translate-x-1 group-hover:text-accent-contrast"
+              <li key={domain.href} className="h-full">
+                <Reveal direction="left" delayMs={(index % 3) * 120} className="h-full">
+                  <Link
+                    href={domain.href}
+                    className="group flex h-full flex-col gap-4 border-t border-line p-7 transition-colors duration-200 hover:border-accent hover:bg-page-alt"
                   >
-                    Découvrir →
-                  </span>
-                </Link>
+                    <span className="font-(family-name:--font-display) text-[0.875rem] tabular-nums text-accent-contrast">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h2 className="font-(family-name:--font-display) text-[1.3125rem] leading-snug">
+                      {domain.label}
+                    </h2>
+                    {domain.claim ? (
+                      <p className="text-[0.9375rem] leading-snug text-text">
+                        {resolveBrandText(domain.claim, brand)}
+                      </p>
+                    ) : null}
+                    {domain.summary ? (
+                      <p className="line-clamp-4 text-[0.875rem] leading-[1.7] text-text-muted">
+                        {resolveBrandText(domain.summary, brand)}
+                      </p>
+                    ) : null}
+                    <span
+                      aria-hidden="true"
+                      className="mt-auto pt-3 text-[0.8125rem] text-text-muted transition-transform duration-200 ease-(--ease-out-quart) group-hover:translate-x-1 group-hover:text-accent-contrast"
+                    >
+                      Découvrir →
+                    </span>
+                  </Link>
+                </Reveal>
               </li>
             ))}
           </ul>

@@ -1,6 +1,7 @@
 import { resolveBrandText, type Brand } from '@/brand/brands'
 import { Button } from '@/components/ui/Button'
 import { LegalIdentity } from '@/components/LegalIdentity'
+import { Reveal } from '@/components/Reveal'
 import type { Block } from '@/content/fr/types'
 
 /** Contexte de rendu : sur un bandeau inversé, les jetons de couleur changent de rôle. */
@@ -90,16 +91,18 @@ function Items({
           key={index}
           className={`border-t ${t.cardBorder} ${t.cardBg} pt-6 pr-6 pb-7 sm:pt-7`}
         >
-          <h3
-            className={`font-(family-name:--font-display) text-[1.1875rem] leading-snug ${t.strong}`}
-          >
-            {text(item.label, brand)}
-          </h3>
-          {item.text ? (
-            <p className={`mt-3 text-[0.9375rem] leading-[1.7] ${t.body}`}>
-              {text(item.text, brand)}
-            </p>
-          ) : null}
+          <Reveal direction="left" delayMs={(index % 2) * 150}>
+            <h3
+              className={`font-(family-name:--font-display) text-[1.1875rem] leading-snug ${t.strong}`}
+            >
+              {text(item.label, brand)}
+            </h3>
+            {item.text ? (
+              <p className={`mt-3 text-[0.9375rem] leading-[1.7] ${t.body}`}>
+                {text(item.text, brand)}
+              </p>
+            ) : null}
+          </Reveal>
         </li>
       ))}
     </ul>
@@ -119,36 +122,38 @@ function Steps({
   return (
     <ol className="relative space-y-10 sm:space-y-12">
       {items.map((step, index) => (
-        <li key={step.num} className="relative flex gap-6 sm:gap-10">
-          <div className="flex flex-col items-center">
-            <span
-              className={`font-(family-name:--font-display) text-[1.375rem] leading-none tabular-nums ${
-                tone === 'band' ? 'text-band-accent' : 'text-accent-contrast'
-              }`}
-            >
-              {step.num}
-            </span>
-            {index < items.length - 1 ? (
+        <li key={step.num} className="relative">
+          <Reveal direction="up" delayMs={index * 120} className="flex gap-6 sm:gap-10">
+            <div className="flex flex-col items-center">
               <span
-                aria-hidden="true"
-                className={`mt-3 w-px flex-1 ${
-                  tone === 'band' ? 'bg-band-muted/30' : 'step-rail opacity-60'
+                className={`font-(family-name:--font-display) text-[1.375rem] leading-none tabular-nums ${
+                  tone === 'band' ? 'text-band-accent' : 'text-accent-contrast'
                 }`}
-              />
-            ) : null}
-          </div>
-          <div className="flex-1 pb-1">
-            <h3
-              className={`font-(family-name:--font-display) text-[1.25rem] leading-snug ${t.strong}`}
-            >
-              {text(step.label, brand)}
-            </h3>
-            {step.text ? (
-              <p className={`mt-3 max-w-(--container-prose) text-[0.9375rem] leading-[1.7] ${t.body}`}>
-                {text(step.text, brand)}
-              </p>
-            ) : null}
-          </div>
+              >
+                {step.num}
+              </span>
+              {index < items.length - 1 ? (
+                <span
+                  aria-hidden="true"
+                  className={`mt-3 w-px flex-1 ${
+                    tone === 'band' ? 'bg-band-muted/30' : 'step-rail opacity-60'
+                  }`}
+                />
+              ) : null}
+            </div>
+            <div className="flex-1 pb-1">
+              <h3
+                className={`font-(family-name:--font-display) text-[1.25rem] leading-snug ${t.strong}`}
+              >
+                {text(step.label, brand)}
+              </h3>
+              {step.text ? (
+                <p className={`mt-3 max-w-(--container-prose) text-[0.9375rem] leading-[1.7] ${t.body}`}>
+                  {text(step.text, brand)}
+                </p>
+              ) : null}
+            </div>
+          </Reveal>
         </li>
       ))}
     </ol>

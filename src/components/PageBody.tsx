@@ -1,5 +1,6 @@
 import { resolveBrandText, type Brand } from '@/brand/brands'
 import { BlockRenderer, type Tone } from '@/components/blocks/BlockRenderer'
+import { Reveal } from '@/components/Reveal'
 import { Container } from '@/components/ui/Container'
 import type { Block, PageContent, Section } from '@/content/fr/types'
 
@@ -178,10 +179,12 @@ export function PageBody({
             className={`py-16 sm:py-20 lg:py-(--spacing-section) ${sectionBackground(section, tone)}`}
           >
             <Container>
-              {section.title && !skipTitle ? (
-                <SectionHeading title={section.title} tone={tone} brand={brand} />
-              ) : null}
-              <SectionBlocks section={section} brand={brand} tone={tone} ctaHref={ctaHref} />
+              <Reveal>
+                {section.title && !skipTitle ? (
+                  <SectionHeading title={section.title} tone={tone} brand={brand} />
+                ) : null}
+                <SectionBlocks section={section} brand={brand} tone={tone} ctaHref={ctaHref} />
+              </Reveal>
             </Container>
           </section>
         )
